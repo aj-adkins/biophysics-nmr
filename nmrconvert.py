@@ -104,7 +104,7 @@ def main():
 		ng.pipe.write(out_file, dic, data, overwrite=True)
 
 	else:
-		C.from_varian(vdic, vdata, udic)
+		C.from_varian(vdic, vdata)
 		ng.pipe.write(out_file, *C.to_pipe(), overwrite=True)
 
 warnings.filterwarnings("ignore")
