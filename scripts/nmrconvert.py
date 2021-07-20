@@ -49,8 +49,7 @@ def reshuffle_rance_kay(data):
 
 	return shuffled
 
-def main():
-	exp_dir = prompt_with_default('Enter experiment directory', './')
+def main(exp_dir):
 	acq_mode = prompt_with_default('Enter indirect acquisition mode ([C]omplex,[R]ance-Kay)', 'C')
 	acq_mode = 'Complex' if acq_mode == 'C' else 'Rance-Kay'
 	if acq_mode == 'Rance-Kay':
@@ -110,4 +109,4 @@ def main():
 warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
-	main()
+	main(sys.argv[1])
