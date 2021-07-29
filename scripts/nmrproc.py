@@ -39,15 +39,14 @@ def nmr_proc(procprm):
                     except ValueError:
                         parameters += ', %s=True' % (str(s[1:]))
                 elif s.startswith('/'):
-                    parameters += ', {a}=True'.format(a=str(s[1:]))
+                    parameters += ', %s=True' % (str(s[1:]))
             try:
                 dic, data = eval('ng.pipe_proc.%s(dic, data %s)' % (line[0].lower(), parameters))
                 # Evaluates an expression that applies the appropriate processing command with its parameters
             except AttributeError:
-                print('Error: Unknown function "{a}" on line {b}'.format(a=line[0], b=lines.index(l) + 1))
+                print('Error: Unknown function "%s" on line %s' % (line[0], lines.index(l) + 1))
             except TypeError:
-                print('Error: Unknown parameter found in "{a}" on line {b}'.format(a=parameters[2:],
-                                                                                   b=lines.index(l) + 1))
+                print('Error: Unknown parameter found in "%s" on line %s' % (parameters[2:], lines.index(l) + 1))
             except NameError:
                 pass
 
