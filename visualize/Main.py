@@ -22,6 +22,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.graphicsView = pg.PlotWidget(self.centralwidget)
         self.mouse_clicked = True
+        self.peak_box = None
 
         # Control Object
         self.c = Control()
@@ -213,6 +214,19 @@ class Ui_MainWindow(object):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
+        self.groupBox_2 = QtWidgets.QGroupBox(self.centralwidget)
+        self.groupBox_2.setGeometry(QtCore.QRect(10, 280, 171, 431))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.groupBox_2.setFont(font)
+        self.groupBox_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.groupBox_2.setObjectName("groupBox_2")
+        self.listWidget = QtWidgets.QListWidget(self.groupBox_2)
+        self.listWidget.setGeometry(QtCore.QRect(0, 30, 171, 391))
+        self.listWidget.setObjectName("listWidget")
+
+        self.listWidget.itemSelectionChanged.connect(self.selection_changed)
+
         self.v_line = pg.InfiniteLine(angle=90, movable=False)
         self.h_line = pg.InfiniteLine(angle=0, movable=False)
 
@@ -235,6 +249,7 @@ class Ui_MainWindow(object):
         self.add_button.setText(_translate("MainWindow", "Add"))
         self.remove_button.setText(_translate("MainWindow", "Remove"))
         self.label_5.setText(_translate("MainWindow", " Color:"))
+        self.groupBox_2.setTitle(_translate("MainWindow", "Peaks"))
 
     def open_file_dialog(self):
         options = QFileDialog.Options()
@@ -268,6 +283,7 @@ class Ui_MainWindow(object):
             self.pushButton_3.setStyleSheet(f'background-color: {spectrum.get_color()}')
             self.on_selection()
             self.display_peaks(spectrum)
+            self.list_peaks()
 
             self.graphicsView.disableAutoRange()
         else:
@@ -364,6 +380,7 @@ class Ui_MainWindow(object):
         else:
             s.scatter_plot.setPen(None)
             s.set_visibility(False)
+            self.graphicsView.removeItem(self.peak_box)
 
     def show_x_slice(self, state=False):
         if state:
@@ -405,15 +422,31 @@ class Ui_MainWindow(object):
     def set_p1(self, val):
         self.p1_slider.setValue(float(val))
 
+    def list_peaks(self):
+        s = self.current_spectrum
+        for i, (x, y) in enumerate(zip(s.peak_xlocations_ppm, s.peak_ylocations_ppm)):
+            self.listWidget.addItem(QtWidgets.QListWidgetItem(f'{i+1}: {round(x, 3)}, {round(y, 3)} ', self.listWidget))
+
+    def selection_changed(self):
+        s = self.current_spectrum
+        row_index = self.listWidget.currentRow()
+        scale= (s.x1 - s.x0)/(s.y1 - s.y0)
+        self.graphicsView.removeItem(self.peak_box)
+        if s.get_peak_visibility() == True:
+            self.peak_box = pg.QtGui.QGraphicsRectItem(s.peak_xlocations_ppm[row_index] - 0.05, s.peak_ylocations_ppm[row_index]-0.3, 0.1, 0.66)
+            self.peak_box.setPen(pg.mkPen('w'))
+            self.graphicsView.addItem(self.peak_box)
 
 class Spectrum:
     contour_start = 10  # contour level start value
     contour_num = 50  # number of contour levels
     contour_factor = 1.7
+
+
     spec_start = 15
     spec_depth = 15
     pthres = 50000
-    peaks_list = []
+
 
     def __init__(self, file):
         self.dic, self.data = ng.pipe.read(str(file))
