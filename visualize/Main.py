@@ -1,12 +1,12 @@
 import sys
 import os
 import random
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog, QColorDialog
 import pyqtgraph as pg
 import numpy as np
 import nmrglue as ng
 import warnings
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QFileDialog, QColorDialog
 
 warnings.filterwarnings('ignore')
 
@@ -15,12 +15,12 @@ class Ui_MainWindow(object):
     spectra = {}
     current_spectrum = None
 
-    def setupUi(self, MainWindow):
+    def setup_ui(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1450, 920)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.graphicsView = pg.PlotWidget(self.centralwidget)
+        self.graphics_view = pg.PlotWidget(self.centralwidget)
         self.mouse_clicked = True
         self.peak_box = None
 
@@ -28,17 +28,17 @@ class Ui_MainWindow(object):
         self.c = Control()
 
         # Contour Spectrum
-        # self.graphicsView.setEnabled(False)
-        self.graphicsView.setGeometry(QtCore.QRect(190, 70, 1211, 811))
-        self.graphicsView.setObjectName("graphicsView")
-        self.graphicsView.showGrid(x=True, y=True, alpha=0.5)
-        self.graphicsView.getViewBox().invertX(True)
-        self.graphicsView.getViewBox().invertY(True)
-        self.graphicsView.enableAutoRange()
+        # self.graphics_view.setEnabled(False)
+        self.graphics_view.setGeometry(QtCore.QRect(190, 70, 1211, 811))
+        self.graphics_view.setObjectName("graphics_view")
+        self.graphics_view.showGrid(x=True, y=True, alpha=0.5)
+        self.graphics_view.getViewBox().invertX(True)
+        self.graphics_view.getViewBox().invertY(True)
+        self.graphics_view.enableAutoRange()
 
         # Mouse Location
-        self.graphicsView.scene().sigMouseMoved.connect(self.on_mouse_move)
-        self.graphicsView.scene().sigMouseClicked.connect(self.on_mouse_click)
+        self.graphics_view.scene().sigMouseMoved.connect(self.on_mouse_move)
+        self.graphics_view.scene().sigMouseClicked.connect(self.on_mouse_click)
 
         # P0 Slider
         self.p0_slider = QtWidgets.QSlider(self.centralwidget)
@@ -137,38 +137,38 @@ class Ui_MainWindow(object):
             pass
 
         # Spectrum Selector
-        self.comboBox = QtWidgets.QComboBox(self.groupBox)
-        self.comboBox.setGeometry(QtCore.QRect(40, 35, 131, 31))
-        self.comboBox.setObjectName("comboBox")
-        self.current_spectrum = self.comboBox.currentData()
-        self.comboBox.activated[str].connect(self.on_selection)
+        self.file_selector = QtWidgets.QComboBox(self.groupBox)
+        self.file_selector.setGeometry(QtCore.QRect(40, 35, 131, 31))
+        self.file_selector.setObjectName("file_selector")
+        self.current_spectrum = self.file_selector.currentData()
+        self.file_selector.activated[str].connect(self.on_selection)
 
         # Color Selector
-        self.pushButton_3 = QtWidgets.QPushButton(self.groupBox)
-        self.pushButton_3.setGeometry(QtCore.QRect(40, 100, 131, 32))
-        self.pushButton_3.setText("")
-        self.pushButton_3.setObjectName("pushButton_3")
-        self.pushButton_3.clicked.connect(self.open_color_dialog)
+        self.color_selector = QtWidgets.QPushButton(self.groupBox)
+        self.color_selector.setGeometry(QtCore.QRect(40, 100, 131, 32))
+        self.color_selector.setText("")
+        self.color_selector.setObjectName("color_selector")
+        self.color_selector.clicked.connect(self.open_color_dialog)
 
         # Toggle Contours
-        self.contourBox = QtWidgets.QCheckBox(self.groupBox)
-        self.contourBox.setGeometry(QtCore.QRect(0, 140, 81, 21))
+        self.contour_box = QtWidgets.QCheckBox(self.groupBox)
+        self.contour_box.setGeometry(QtCore.QRect(0, 140, 81, 21))
         font = QtGui.QFont()
         font.setPointSize(14)
-        self.contourBox.setFont(font)
-        self.contourBox.setLayoutDirection(QtCore.Qt.LayoutDirection.RightToLeft)
-        self.contourBox.setObjectName("contourBox")
-        self.contourBox.stateChanged.connect(self.set_spectrum_visibility)
+        self.contour_box.setFont(font)
+        self.contour_box.setLayoutDirection(QtCore.Qt.LayoutDirection.RightToLeft)
+        self.contour_box.setObjectName("contour_box")
+        self.contour_box.stateChanged.connect(self.set_spectrum_visibility)
 
         # Toggle Peaks
-        self.peaksBox = QtWidgets.QCheckBox(self.groupBox)
-        self.peaksBox.setGeometry(QtCore.QRect(70, 140, 81, 21))
+        self.peaks_box = QtWidgets.QCheckBox(self.groupBox)
+        self.peaks_box.setGeometry(QtCore.QRect(70, 140, 81, 21))
         font = QtGui.QFont()
         font.setPointSize(14)
-        self.peaksBox.setFont(font)
-        self.peaksBox.setLayoutDirection(QtCore.Qt.LayoutDirection.RightToLeft)
-        self.peaksBox.setObjectName("peaksBox")
-        self.peaksBox.stateChanged.connect(self.set_peak_visibility)
+        self.peaks_box.setFont(font)
+        self.peaks_box.setLayoutDirection(QtCore.Qt.LayoutDirection.RightToLeft)
+        self.peaks_box.setObjectName("peaks_box")
+        self.peaks_box.stateChanged.connect(self.set_peak_visibility)
 
         font = QtGui.QFont()
         font.setPointSize(13)
@@ -241,8 +241,8 @@ class Ui_MainWindow(object):
         self.p1_label.setText(_translate("MainWindow", "P1:"))
         self.groupBox.setTitle(_translate("MainWindow", "Spectrum"))
         self.file_label.setText(_translate("MainWindow", "File:"))
-        self.contourBox.setText(_translate("MainWindow", "Contour"))
-        self.peaksBox.setText(_translate("MainWindow", "Peaks"))
+        self.contour_box.setText(_translate("MainWindow", "Contour"))
+        self.peaks_box.setText(_translate("MainWindow", "Peaks"))
         self.x_slice_box.setText(_translate("MainWindow", "X-Slice"))
         self.y_slice_box.setText(_translate("MainWindow", "Y-Slice"))
         self.label_7.setText(_translate("MainWindow", "test"))
@@ -272,20 +272,20 @@ class Ui_MainWindow(object):
     def add_spectrum(self, spectrum):
         if not spectrum.__str__() in self.spectra:
             if self.current_spectrum is None:
-                self.graphicsView.enableAutoRange()
+                self.graphics_view.enableAutoRange()
 
             for i in range(spectrum.spec_start, spectrum.spec_start + spectrum.spec_depth):
                 print(f'Loading isocurve {i - spectrum.spec_start + 1} of {spectrum.spec_depth}')
-                self.graphicsView.addItem(spectrum.contours[i])
+                self.graphics_view.addItem(spectrum.contours[i])
             self.spectra[spectrum.__str__()] = spectrum
-            self.comboBox.addItem(spectrum.__str__())
+            self.file_selector.addItem(spectrum.__str__())
             self.current_spectrum = spectrum
-            self.pushButton_3.setStyleSheet(f'background-color: {spectrum.get_color()}')
+            self.color_selector.setStyleSheet(f'background-color: {spectrum.get_color()}')
             self.on_selection()
             self.display_peaks(spectrum)
             self.list_peaks()
 
-            self.graphicsView.disableAutoRange()
+            self.graphics_view.disableAutoRange()
         else:
             print('Error: Spectrum is already loaded')
 
@@ -293,36 +293,37 @@ class Ui_MainWindow(object):
         s = self.current_spectrum
         try:
             for i in range(len(s.contours)):
-                self.graphicsView.removeItem(s.contours[i])
-            self.graphicsView.removeItem(s.scatter_plot)
+                self.graphics_view.removeItem(s.contours[i])
+            self.graphics_view.removeItem(s.scatter_plot)
             self.spectra.pop(s.__str__())
-            spec_index = self.comboBox.currentIndex()
-            self.comboBox.removeItem(spec_index)
-            self.graphicsView.removeItem(self.xslice_line)
-            self.graphicsView.removeItem(self.yslice_line)
-            self.pushButton_3.setStyleSheet("")
-            self.contourBox.setChecked(False)
-            self.peaksBox.setChecked(False)
+            spec_index = self.file_selector.currentIndex()
+            self.file_selector.removeItem(spec_index)
+            self.graphics_view.removeItem(self.xslice_line)
+            self.graphics_view.removeItem(self.yslice_line)
+            self.color_selector.setStyleSheet("")
+            self.contour_box.setChecked(False)
+            self.peaks_box.setChecked(False)
             self.current_spectrum = None
             print(f'Removed {s.__str__()}')
         except (KeyError, AttributeError):
             print('Error: No spectrum selected')
 
     def on_selection(self):
-        print(self.comboBox.currentText())
-        self.current_spectrum = self.spectra[self.comboBox.currentText()]
+        print(self.file_selector.currentText())
+        self.current_spectrum = self.spectra[self.file_selector.currentText()]
         self.set_contour_level.setValue(self.current_spectrum.spec_start)
-        self.pushButton_3.setStyleSheet(f'background-color: {self.current_spectrum.get_color()}')
-        self.contourBox.setChecked(self.current_spectrum.get_visibility())
-        self.peaksBox.setChecked(self.current_spectrum.get_peak_visibility())
+        self.color_selector.setStyleSheet(f'background-color: {self.current_spectrum.get_color()}')
+        self.contour_box.setChecked(self.current_spectrum.get_visibility())
+        self.peaks_box.setChecked(self.current_spectrum.get_peak_visibility())
         self.x_slice_box.setChecked(self.current_spectrum.get_xslice_state())
         self.y_slice_box.setChecked(self.current_spectrum.get_yslice_state())
+        self.list_peaks()
 
     def on_mouse_click(self):
-        self.mouse_clicked = not self.mouse_clicked
+        print(self.p.x(), self.p.y())
 
     def on_mouse_move(self, point):
-        self.p = self.graphicsView.plotItem.vb.mapSceneToView(point)
+        self.p = self.graphics_view.plotItem.vb.mapSceneToView(point)
         self.label_7.setText(f'x: {round(self.p.x(), 3)} , y: {round(self.p.y(), 3)}')
 
         self.v_line.setValue(self.p.x())
@@ -333,7 +334,7 @@ class Ui_MainWindow(object):
                 x_pos = self.current_spectrum.xslice_data(self.p.y(), self.p0_slider.value())
                 self.xslice_line.setData(x_pos[0], x_pos[1])
 
-            if self.current_spectrum is not None and self.current_spectrum.get_yslice_state() and self.mouse_clicked:
+            if self.current_spectrum is not None and self.current_spectrum.get_yslice_state():
                 y_pos = self.current_spectrum.yslice_data(self.p.x())
                 self.yslice_line.setData(y_pos[0], y_pos[1])
         except IndexError:
@@ -343,21 +344,21 @@ class Ui_MainWindow(object):
         val = self.set_contour_level.value()
         if val > spectrum.spec_start:
             print(f'spectrum depth: {val}')
-            self.graphicsView.removeItem(spectrum.contours[spectrum.spec_start])
+            self.graphics_view.removeItem(spectrum.contours[spectrum.spec_start])
             spectrum.spec_start = val
-            self.graphicsView.addItem(spectrum.contours[spectrum.spec_start + spectrum.spec_depth])
+            self.graphics_view.addItem(spectrum.contours[spectrum.spec_start + spectrum.spec_depth])
         elif val < spectrum.spec_start:
             print(f'spectrum depth: {val}')
-            self.graphicsView.removeItem(spectrum.contours[spectrum.spec_start + spectrum.spec_depth])
+            self.graphics_view.removeItem(spectrum.contours[spectrum.spec_start + spectrum.spec_depth])
             spectrum.spec_start = val
-            self.graphicsView.addItem(spectrum.contours[spectrum.spec_start])
+            self.graphics_view.addItem(spectrum.contours[spectrum.spec_start])
 
     def change_color(self, color):
         s = self.current_spectrum
         for i in range(len(s.contours)):
             s.contours[i].setPen(color)
         s.set_color(color)
-        self.pushButton_3.setStyleSheet(f'background-color: {s.get_color()}')
+        self.color_selector.setStyleSheet(f'background-color: {s.get_color()}')
 
     def set_spectrum_visibility(self, state=True):
         s = self.current_spectrum
@@ -380,32 +381,32 @@ class Ui_MainWindow(object):
         else:
             s.scatter_plot.setPen(None)
             s.set_visibility(False)
-            self.graphicsView.removeItem(self.peak_box)
+            self.graphics_view.removeItem(self.peak_box)
 
     def show_x_slice(self, state=False):
         if state:
-            self.graphicsView.addItem(self.h_line)
+            self.graphics_view.addItem(self.h_line)
             self.xslice_line = pg.PlotCurveItem()
-            self.graphicsView.addItem(self.xslice_line)
+            self.graphics_view.addItem(self.xslice_line)
             self.current_spectrum.set_xslice_state(True)
         else:
-            self.graphicsView.removeItem(self.h_line)
-            self.graphicsView.removeItem(self.xslice_line)
+            self.graphics_view.removeItem(self.h_line)
+            self.graphics_view.removeItem(self.xslice_line)
             self.current_spectrum.set_xslice_state(False)
 
     def show_y_slice(self, state=False):
         if state:
-            self.graphicsView.addItem(self.v_line)
+            self.graphics_view.addItem(self.v_line)
             self.yslice_line = pg.PlotCurveItem()
-            self.graphicsView.addItem(self.yslice_line)
+            self.graphics_view.addItem(self.yslice_line)
             self.current_spectrum.set_yslice_state(True)
         else:
-            self.graphicsView.removeItem(self.v_line)
-            self.graphicsView.removeItem(self.yslice_line)
+            self.graphics_view.removeItem(self.v_line)
+            self.graphics_view.removeItem(self.yslice_line)
             self.current_spectrum.set_yslice_state(False)
 
     def display_peaks(self, spectrum):
-        self.graphicsView.addItem(spectrum.scatter_plot)
+        self.graphics_view.addItem(spectrum.scatter_plot)
 
     def p0_phase(self):
         self.p0_window.setText(str(self.p0_slider.value()))
@@ -424,25 +425,25 @@ class Ui_MainWindow(object):
 
     def list_peaks(self):
         s = self.current_spectrum
+        self.listWidget.clear()
         for i, (x, y) in enumerate(zip(s.peak_xlocations_ppm, s.peak_ylocations_ppm)):
-            self.listWidget.addItem(QtWidgets.QListWidgetItem(f'{i+1}: {round(x, 3)}, {round(y, 3)} ', self.listWidget))
+            item = QtWidgets.QListWidgetItem(f'{i+1}: {round(x, 3)}, {round(y, 3)} ', self.listWidget)
+            self.listWidget.addItem(item)
 
     def selection_changed(self):
         s = self.current_spectrum
         row_index = self.listWidget.currentRow()
         scale= (s.x1 - s.x0)/(s.y1 - s.y0)
-        self.graphicsView.removeItem(self.peak_box)
-        if s.get_peak_visibility() == True:
-            self.peak_box = pg.QtGui.QGraphicsRectItem(s.peak_xlocations_ppm[row_index] - 0.05, s.peak_ylocations_ppm[row_index]-0.3, 0.1, 0.66)
-            self.peak_box.setPen(pg.mkPen('w'))
-            self.graphicsView.addItem(self.peak_box)
+        self.graphics_view.removeItem(self.peak_box)
+        if s.get_peak_visibility():
+            self.peak__highlight_box = pg.QtGui.QGraphicsRectItem(s.peak_xlocations_ppm[row_index] - 0.05, s.peak_ylocations_ppm[row_index]-0.3, 0.1, 0.66)
+            self.peak_highlight_box.setPen(pg.mkPen('w'))
+            self.graphics_view.addItem(self.peak__highlight_box)
 
 class Spectrum:
     contour_start = 10  # contour level start value
     contour_num = 50  # number of contour levels
     contour_factor = 1.7
-
-
     spec_start = 15
     spec_depth = 15
     pthres = 50000
@@ -560,6 +561,7 @@ class Spectrum:
         return self.yslice
 
 
+
 class Control:
     def depth(self):
         ui.change_depth(ui.current_spectrum)
@@ -571,7 +573,7 @@ class Control:
 app = QtWidgets.QApplication(sys.argv)
 MainWindow = QtWidgets.QMainWindow()
 ui = Ui_MainWindow()
-ui.setupUi(MainWindow)
+ui.setup_ui(MainWindow)
 
 screen = app.primaryScreen()
 size = screen.size()

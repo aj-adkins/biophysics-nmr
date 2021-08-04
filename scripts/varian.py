@@ -10,6 +10,7 @@
 
 import os
 import sys
+import argparse
 import warnings
 import numpy as np
 import nmrglue as ng
@@ -32,13 +33,6 @@ def get_carrier_position_ppm(carrier_h, frq_h, frq_x, nucleus):
     
     return car_x
 
-def prompt_with_default(prompt, default):
-    '''Input with a prompt and a default value.'''
-    
-    val = input('{} [{}]: '.format(prompt, default)).strip()
-    
-    return val or default
-
 def reshuffle_rance_kay(data):
 	'''Reshuffles the data according to the rance-kay scheme'''
 
@@ -49,26 +43,39 @@ def reshuffle_rance_kay(data):
 
 	return shuffled
 
-def main(exp_dir):
-	acq_mode = prompt_with_default('Enter indirect acquisition mode ([C]omplex,[R]ance-Kay)', 'C')
-	acq_mode = 'Complex' if acq_mode == 'C' else 'Rance-Kay'
-	if acq_mode == 'Rance-Kay':
-		nucleus_x = prompt_with_default('Enter indirect dimension nucleus (H,N,C)', 'N')
-	out_file = input('Enter NMRPipe file name: ')
-	if not out_file.endswith('.fid'):
-		out_file += '.fid'
+def main():
+	parser = argparse.ArgumentParser()
 
+	parser.add_argument('-i', action='store', type=str, required=True, help='Varian directory')
+	parser.add_argument('-o', action='store', type=str, required=True, help='NMRPipe file name')
+	parser.add_argument('-acq', action='store', type=str, help='Acquisition mode')
+	parser.add_argument('-nuc', action='store', type=str, help='Indirect dimension nucleus')
+
+	args = parser.parse_args()
+
+	in_dir = args.i
+	out_file = args.o
+	acq_mode = args.acq
+	nucleus_x = args.nuc
+
+	if not os.path.exists(in_dir):
+		print('The specified file or path does not exist')
+		sys.exit()
+
+	if acq_mode and not nucleus_x:
+		print('Indirect dimesion nucleus [-nuc] (H, N, C) must be specified for rance-kay acquisition')
+		sys.exit()
 
 	# Read in files
-	vdic, vdata = ng.varian.read(exp_dir, torder='f', as_2d=True)
-	procpar_file = os.path.join(exp_dir, 'procpar')
+	vdic, vdata = ng.varian.read(in_dir, torder='f', as_2d=True)
+	procpar_file = os.path.join(in_dir, 'procpar')
 	procpar_dic = ng.fileio.varian.read_procpar(procpar_file)
 
 
 	# Conversion
 	C = ng.convert.converter()
 
-	if acq_mode == 'Rance-Kay':
+	if acq_mode == 'rance-kay':
 
 		# Reshuffle data
 		shuffled_data = reshuffle_rance_kay(vdata)
@@ -101,12 +108,14 @@ def main(exp_dir):
 
 		# Write file
 		ng.pipe.write(out_file, dic, data, overwrite=True)
+		print('NMRPipe file successfully created')
 
 	else:
 		C.from_varian(vdic, vdata)
 		ng.pipe.write(out_file, *C.to_pipe(), overwrite=True)
+		print('NMRPipe file successfully created')
 
 warnings.filterwarnings("ignore")
 
 if __name__ == '__main__':
-	main(sys.argv[1])
+	main()
