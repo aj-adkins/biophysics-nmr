@@ -1,6 +1,5 @@
-biophysics-nmr
--------------
--------------
+# biophysics-nmr
+
 
 Description
 -----------
@@ -30,16 +29,20 @@ The varian.py conversion script is able to convert data that is acquired with bo
 * -acq specifies the acquisition mode, which can be either 'complex' or 'rance-kay'. It is complex by default. 
 * -nuc specifies the nucleus in the indirect dimension if rance-kay is selected. It can be either 'N', 'C', or 'H'. 
 For example, the following command can be used to convert standard complex data:
-'''
+```
 python varian.py -i test_varian.fid -o test_pipe.fid 
-'''
+```
 And for rance-kay conversion:
-'''
+```
 python varian.py -i test_varian.fid -o test_pipe.fid -acq rance-kay -nuc N
-'''
+```
 
 #### Bruker
 The bruker.py script operates in the same way as the varian script:
-'''
+```
 python bruker.py -i test_bruker.fid -o test_pipe.fid
-'''
+```
+
+Processing
+---------
+To apply standard processing functions, the script nmrproc.py can be used. 
