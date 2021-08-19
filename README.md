@@ -71,4 +71,4 @@ Visualization
 
 Included in the 'jupyter' folder is a jupyter notebook which details plotting NMR data using matplotlib, including identifying peaks and obtaining one-dimensional slices. 
 
-In the 'visualization' folder, Main.py can be run to launch the interactive NMR software included in this project. 
+In the 'visualize' folder, Main.py can be run to launch the interactive NMR software included in this project. 
